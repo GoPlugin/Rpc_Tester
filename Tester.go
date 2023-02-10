@@ -45,8 +45,7 @@ type JsonrpcMessage struct {
 }
 
 func main() {
-	//http.HandleFunc("/", handleRoot)
-	http.HandleFunc("/createJobs", handleCreateJobs)
+	CreateJobs()
 	http.HandleFunc("/triggerJob1", triggerJob1)
 	http.HandleFunc("/triggerJob2", triggerJob2)
 	http.HandleFunc("/triggerJob3", triggerJob3)
@@ -69,11 +68,11 @@ var jobArray []Jobs
 var FQA []filterQuery
 var triggerCount int
 
-func handleCreateJobs(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("Creating Jobs")
+func CreateJobs() {
+	fmt.Printf("Creating hardcoded Jobs with below filter query:\n")
 	job1.jobId = "6ba16cd62b8b4114b95449e35800cba0"
 	job1.ocaAddress = []string{"0x291D46AE055Dd592B8CC7DdBF232cc206CEfa975"}
-	job1.fromBlock = "0x35e8e0c"
+	job1.fromBlock = "0x35fae97"
 	job1.toBlock = "latest"
 	q1 := createEvmFilterQuery(job1.jobId, job1.ocaAddress)
 	q1.FromBlock = job1.fromBlock
@@ -81,19 +80,19 @@ func handleCreateJobs(w http.ResponseWriter, r *http.Request) {
 
 	job2.jobId = "e21f90744a6f4b44bc00086d30717777"
 	job2.ocaAddress = []string{"0x58d4BbD5F75c87ECa079a31d3Bd6d50e737aC0f5"}
-	job2.fromBlock = "0x35e8e0c"
+	job2.fromBlock = "0x35fae63"
 	job2.toBlock = "latest"
-	q2 := createEvmFilterQuery(job1.jobId, job1.ocaAddress)
-	q2.FromBlock = job1.fromBlock
-	q2.ToBlock = job1.toBlock
+	q2 := createEvmFilterQuery(job2.jobId, job2.ocaAddress)
+	q2.FromBlock = job2.fromBlock
+	q2.ToBlock = job2.toBlock
 
 	job3.jobId = "09d1e90f9eaa48ad8042f9e255b21984"
 	job3.ocaAddress = []string{"0xa778D1539b8fb94662Fae3D33b9d06D48E75021C"}
-	job3.fromBlock = "0x35e96FC"
-	job1.toBlock = "latest"
-	q3 := createEvmFilterQuery(job1.jobId, job1.ocaAddress)
-	q3.FromBlock = job1.fromBlock
-	q3.ToBlock = job1.toBlock
+	job3.fromBlock = "0x35fa525"
+	job3.toBlock = "latest"
+	q3 := createEvmFilterQuery(job3.jobId, job3.ocaAddress)
+	q3.FromBlock = job3.fromBlock
+	q3.ToBlock = job3.toBlock
 
 	jobArray = append(jobArray, job1)
 	jobArray = append(jobArray, job2)
@@ -101,13 +100,18 @@ func handleCreateJobs(w http.ResponseWriter, r *http.Request) {
 	FQA = append(FQA, *q1)
 	FQA = append(FQA, *q2)
 	FQA = append(FQA, *q3)
-	fmt.Println("Created filter queries")
-	// for _, filterquerys := range FQA {
-	// 	fmt.Println("FQA address:", filterquerys.Addresses)
-	// 	fmt.Println("FQA topics:", filterquerys.Topics)
-	// 	fmt.Println("FQA fromBlock:", filterquerys.FromBlock)
-	// 	fmt.Println("FQA toBlock:", filterquerys.ToBlock)
-	// }
+	var counter int
+	counter = 1
+	for _, filterquerys := range FQA {
+
+		fmt.Println("Filter Query for Job:", counter)
+		fmt.Println("Filter Query address:", filterquerys.Addresses)
+		fmt.Println("Filter Query topics:", filterquerys.Topics)
+		fmt.Println("Filter Query fromBlock:", filterquerys.FromBlock)
+		fmt.Println("Filter Query toBlock:", filterquerys.ToBlock)
+		counter++
+		fmt.Println("\n\n")
+	}
 
 }
 func triggerJob1(w http.ResponseWriter, r *http.Request) {
@@ -148,44 +152,6 @@ func triggerJob(q filterQuery, triggerCount int) {
 		fmt.Println("Response :", responseJSON["result"])
 	}
 }
-
-// func handleRoot(w http.ResponseWriter, r *http.Request) {
-// 	fmt.Fprintf(w, "Welcome to the server!")
-// 	jobid := "c3d9861a75b945888e14b37e406cd85f"
-// 	ocaAddress := []string{"0xA847a7b737e2414Fc6BEef7A1eF05aE446206B52"}
-// 	q := createEvmFilterQuery(jobid, ocaAddress)
-// 	q.FromBlock = "0x2a922c1"
-// 	q.ToBlock = "latest"
-// 	fmt.Println("value in fromBlock", q.FromBlock)
-// 	fmt.Println("value in ToBlock", q.ToBlock)
-// 	fmt.Println("value in Addresses", q.Addresses)
-// 	fmt.Println("value in Topics", q.Topics)
-
-// 	filterBytes, err := json.Marshal(q)
-// 	if err != nil {
-// 		//return nil
-// 	}
-
-// 	msg := JsonrpcMessage{
-// 		Version: "2.0",
-// 		ID:      json.RawMessage(`1`),
-// 	}
-// 	msg.Method = "eth_getLogs"
-// 	msg.Params = json.RawMessage(`[` + string(filterBytes) + `]`)
-// 	bytes, err := json.Marshal(msg)
-// 	//sendRpcRequest(bytes)
-// 	for {
-// 		time.Sleep(1)
-// 		fmt.Println("Polling")
-// 		url := "https://3.16.227.1262"
-// 		resp, _ := sendPostRequest(url, bytes)
-// 		//response,_ := ioutil.ReadAll(resp.body)
-// 		var responseJSON map[string]interface{}
-// 		json.Unmarshal(resp, &responseJSON)
-
-// 		fmt.Println("Response :", responseJSON["result"])
-// 	}
-// }
 
 func sendPostRequest(url string, body []byte) ([]byte, error) {
 	time.Sleep(2 * time.Second)

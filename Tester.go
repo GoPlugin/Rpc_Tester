@@ -114,6 +114,7 @@ func CreateJobs() {
 	}
 
 }
+
 func triggerJob1(w http.ResponseWriter, r *http.Request) {
 	triggerCount++
 	go triggerJob(FQA[0], triggerCount)
@@ -144,9 +145,8 @@ func triggerJob(q filterQuery, triggerCount int) {
 		bytes, err := json.Marshal(msg)
 		time.Sleep(1)
 		fmt.Println("Polling on job trigger number", triggerCount)
-		url := "http://18.217.184.54:8989"
+		url := "https://xPLI.xdcrpc.com/"
 		resp, _ := sendPostRequest(url, bytes)
-		//response,_ := ioutil.ReadAll(resp.body)
 		var responseJSON map[string]interface{}
 		json.Unmarshal(resp, &responseJSON)
 		fmt.Println("Response :", responseJSON["result"])

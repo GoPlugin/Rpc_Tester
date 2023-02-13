@@ -145,7 +145,7 @@ func triggerJob(q filterQuery, triggerCount int) {
 		bytes, err := json.Marshal(msg)
 		time.Sleep(1)
 		fmt.Println("Polling on job trigger number", triggerCount)
-		url := "https://xPLI.xdcrpc.com/"
+		url := "PASTE_YOUR_RPC_URL"
 		resp, _ := sendPostRequest(url, bytes)
 		var responseJSON map[string]interface{}
 		json.Unmarshal(resp, &responseJSON)
